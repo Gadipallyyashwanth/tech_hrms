@@ -86,7 +86,7 @@ const Layout = () => {
             <div className="bg-dark text-white p-3 d-flex flex-column" style={{ width: '240px' }}>
                 <div className="flex items-center justify-start mb-8 space-x-2 whitespace-nowrap">
                     <img src={logo} alt="Company Logo" className="h-8 w-8 object-contain" style={{ height: '50px' }} />
-                    <h5 className="text-lg font-bold text-white">SIA HRMS</h5>
+                    <h5 className="fw-bold">SIA HRMS</h5>
                 </div>
                 <nav className="nav flex-column gap-1">
                     {[

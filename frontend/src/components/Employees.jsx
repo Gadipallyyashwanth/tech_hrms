@@ -4,11 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { Eye, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [statuses, setStatuses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedDepartment, setSelectedDepartment] = useState('All Departments');
+    const [selectedStatus, setSelectedStatus] = useState('All Status');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,6 +20,10 @@ const Employees = () => {
                 const response = await fetch('http://127.0.0.1:8000/api/employees/');
                 const data = await response.json();
                 setEmployees(data.data || []);
+                const uniqueDepartments = [...new Set(data.data.map(emp => emp.department))];
+                const uniqueStatuses = [...new Set(data.data.map(emp => (emp.status || '').toLowerCase()))];
+                setDepartments(uniqueDepartments.filter(Boolean));
+                setStatuses(uniqueStatuses.filter(Boolean));
             } catch (error) {
                 console.error('Error fetching employees:', error);
                 setEmployees([]);
@@ -27,15 +34,20 @@ const Employees = () => {
         fetchEmployees();
     }, []);
 
-    
-
-    const filteredEmployees = Array.isArray(employees)
-        ? employees.filter(emp =>
+    const filteredEmployees = employees
+        .filter(emp =>
             (emp?.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
             (emp?.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
             (emp?.employee_id?.toLowerCase() || '').includes(searchTerm.toLowerCase())
         )
-        : [];
+        .filter(emp =>
+            selectedDepartment === 'All Departments' || emp.department === selectedDepartment
+        )
+        .filter(emp => {
+            if (selectedStatus === 'All Status') return true;
+            return (emp.status || '').toLowerCase() === selectedStatus.toLowerCase();
+        })
+        .sort((a, b) => a.name?.localeCompare(b.name));
 
     const handleExport = () => {
         const csvHeader = "Seq,Employee ID,Name,Department,Join Date,Phone,Status\n";
@@ -54,24 +66,23 @@ const Employees = () => {
         return <p style={{ padding: '20px', textAlign: 'center' }}>Loading employees...</p>;
     }
 
-    
     return (
         <div className="w-full max-w-7xl mx-auto mt-4 p-4 border rounded-lg shadow">
             <div className="flex flex-wrap items-center justify-between mb-4 w-full">
                 <h2 className="text-2xl font-bold text-gray-800">Employee Directory</h2>
                 <div className="d-flex justify-content-end align-items-center gap-2">
-                <button
-                    className="bg-dark text-white border border-black px-4 py-2 rounded hover:bg-gray-100 transition"
-                    onClick={handleExport}
-                >
-                    Export CSV
-                </button>
-                <button
-                    className="bg-white text-black border border-black px-4 py-2 rounded hover:bg-gray-100 transition"
-                    onClick={() => navigate('/add-employee')}
-                >
-                    + Add Employee
-                </button>
+                    <button
+                        className="bg-dark text-white border border-black px-4 py-2 rounded hover:bg-gray-100 transition"
+                        onClick={handleExport}
+                    >
+                        Export CSV
+                    </button>
+                    <button
+                        className="bg-white text-black border border-black px-4 py-2 rounded hover:bg-gray-100 transition"
+                        onClick={() => navigate('/add-employee')}
+                    >
+                        + Add Employee
+                    </button>
                 </div>
             </div>
 
@@ -83,12 +94,21 @@ const Employees = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <select className="border rounded px-2 py-1 min-w-[150px]">
+                <select
+                    className="border rounded px-2 py-1 min-w-[150px]"
+                    value={selectedDepartment}
+                    onChange={(e) => setSelectedDepartment(e.target.value)}
+                >
                     <option>All Departments</option>
-                    <option>IT</option>
-                    <option>Human Resources</option>
+                    {departments.map((dept, idx) => (
+                        <option key={idx}>{dept}</option>
+                    ))}
                 </select>
-                <select className="border rounded px-2 py-1 min-w-[120px]">
+                <select
+                    className="border rounded px-2 py-1 min-w-[120px]"
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                >
                     <option>All Status</option>
                     <option>Active</option>
                     <option>Inactive</option>
@@ -118,11 +138,15 @@ const Employees = () => {
                                 <td style={styles.td}>{emp.department || 'N/A'}</td>
                                 <td style={styles.td}>{emp.join_date || 'N/A'}</td>
                                 <td style={styles.td}>{emp.phone || 'N/A'}</td>
-                                <td style={{
-                                    ...styles.td,
-                                    color: emp.status?.toLowerCase() === 'active' ? 'green' : 'red',
-                                    fontWeight: 'bold'
-                                }}>{emp.status || 'N/A'}</td>
+                                <td
+                                    style={{
+                                        ...styles.td,
+                                        color: (emp.status || '').toLowerCase() === 'active' ? 'green' : 'red',
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    {emp.status || 'N/A'}
+                                </td>
                                 <td className="p-4 w-[10%]">
                                     <div className="flex gap-2">
                                         <button
