@@ -1,4 +1,4 @@
-// src/components/AddEmployee.jsx ddd
+// src/components/AddEmployee.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -65,7 +65,6 @@ const AddEmployee = () => {
     const handleSubmit = async () => {
         if (!validate()) return;
 
-        // Check for duplicate employee_id (optional backend API)
         const checkResponse = await fetch(`/api/check-employee-id/${formData.employee_id}`);
         const checkData = await checkResponse.json();
 
@@ -120,8 +119,8 @@ const AddEmployee = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto mt-6 p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Add New Employee</h2>
+        <div className="max-w-6xl mx-auto mt-6 p-6 bg-white shadow-md rounded-lg">
+            <h2 className="text-2xl font-bold mb-6">Add New Employee</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input name="employee_id" label="Employee ID" error={errors.employee_id} value={formData.employee_id} onChange={handleChange} />
@@ -144,15 +143,24 @@ const AddEmployee = () => {
                 <Textarea name="permanent_address" label="Permanent Address" value={formData.permanent_address} onChange={handleChange} />
             </div>
 
-            <div className="mt-6 flex justify-between">
-                <button onClick={() => navigate('/employees')} className="bg-gray-300 hover:bg-gray-400 text-black font-semibold px-4 py-2 rounded">
+            <div className="ml-auto">
+                <button
+                    className="bg-dark text-white border border-black px-4 py-2 rounded hover:bg-gray-100 transition"
+                    onClick={() => navigate('/employees')}                >
                     Back
                 </button>
-                <div className="flex gap-2">
-                    <button onClick={handleReset} className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded">
+
+                <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                    <button
+                        className="bg-dark text-white border border-black px-4 py-2 rounded hover:bg-gray-100 transition"
+                        onClick={handleReset}
+                    >
                         Refresh
                     </button>
-                    <button onClick={handleSubmit} className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded">
+                    <button
+                        className="bg-dark text-white border border-black px-4 py-2 rounded hover:bg-gray-100 transition"
+                        onClick={handleSubmit}
+                    >
                         Save
                     </button>
                 </div>

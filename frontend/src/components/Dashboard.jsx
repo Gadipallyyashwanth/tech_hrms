@@ -33,7 +33,7 @@ const Dashboard = () => {
         //     </h2>
         //     <p>Here's what's happening in your organization today</p>
         // </div>
-
+        
 
             <div class="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg p-6 text-white" 
             data-id="00ip1r0i7" data-path="src/pages/Dashboard.tsx"><h1 style={{ color: '#ee192be6' }}>Welcome {user?.employee_name || 'Employee'} {/* ✅ dynamic name */}</h1>

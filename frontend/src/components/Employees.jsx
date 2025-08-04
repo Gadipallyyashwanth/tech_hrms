@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Eye, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -58,7 +59,7 @@ const Employees = () => {
         <div className="w-full max-w-7xl mx-auto mt-4 p-4 border rounded-lg shadow">
             <div className="flex flex-wrap items-center justify-between mb-4 w-full">
                 <h2 className="text-2xl font-bold text-gray-800">Employee Directory</h2>
-                <div className="ml-auto">
+                <div className="d-flex justify-content-end align-items-center gap-2">
                 <button
                     className="bg-dark text-white border border-black px-4 py-2 rounded hover:bg-gray-100 transition"
                     onClick={handleExport}

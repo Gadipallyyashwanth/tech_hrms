@@ -5,18 +5,20 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const LoginAdmin = () => {
   const navigate = useNavigate();
-  const [employeeId, setEmployeeId] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
-      if (user.role === 'admin' || user.role === 'employee') {
+      if (user.role === 'admin') {
+        navigate('/dashboard');
+      } else if (user.role === 'employee') {
         navigate('/dashboard');
       }
     }
   }, [navigate]);
+
+  const [employeeId, setEmployeeId] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,15 +32,14 @@ const LoginAdmin = () => {
 
       if (response.data.status === 'success') {
         const user = response.data.user;
+        localStorage.setItem('user', JSON.stringify(user));
 
-        // ✅ Debug: Check user fields
-        console.log("User received:", user);
-
-        if (user && user.employee_id && user.role) {
-          localStorage.setItem('user', JSON.stringify(user));
+        if (user.role === 'admin') {
           navigate('/dashboard');
+        } else if (user.role === 'employee') {
+          navigate('dashboard');
         } else {
-          setError('Incomplete user data received.');
+          setError('Unauthorized role. Please contact admin.');
         }
       } else {
         setError('Invalid credentials.');
@@ -59,7 +60,7 @@ const LoginAdmin = () => {
             className="mb-3"
             style={{ width: '80px', height: '80px', display: 'inline-flex' }}
           />
-          <p className="text-primary fw-bold fs-5">TECHPROJECTS</p>
+          <p className="text-primary fw-bold fs-5 animate-text">TECHPROJECTS</p>
           <h3 className="fw-bold">SIA HRMS Login</h3>
         </div>
 
